@@ -14,43 +14,53 @@ const tasks = {
   `
 };
 
-// Determine which portfolio we are viewing based on the filename
-const isSSB = window.location.pathname.includes("ssb.html");
+// Determine which page we are viewing
+const path = window.location.pathname;
+const isSSB = path.includes("ssb.html");
+const isLDE = path.includes("lde.html"); // Formerly index.html content
+const isHub = path.endsWith("index.html") || path.endsWith("/") || (!isSSB && !isLDE);
 
-const contentFiles = isSSB ? {
-    home: "SSB_Home.html",
-    task1: "SSB_Task1.html",
-    task2: "SSB_Task2.html",
-    task3: "SSB_Task3.html",
-    task4: "SSB_Task4.html",
-    conclusion: "SSB_Conclusion.html"
-} : {
-    home: "Home.html",
-    task1: "Task1.html",
-    task2: "Task2.html",
-    task3: "Task3.html",
-    task4: "Task4.html",
-    conclusion: ""
-};
+// Define content mapping ONLY if we are not on the Hub
+let contentFiles = {};
 
-// Load all pages based on the configuration
-const fetchPromises = [
-  fetch(contentFiles.home).then(r => r.ok ? r.text() : "").then(html => { tasks.home = html; }),
-  fetch(contentFiles.task1).then(r => r.ok ? r.text() : "").then(html => { tasks.task1 = html; }),
-  fetch(contentFiles.task2).then(r => r.ok ? r.text() : "").then(html => { tasks.task2 = html; }),
-  fetch(contentFiles.task3).then(r => r.ok ? r.text() : "").then(html => { tasks.task3 = html; }),
-  fetch(contentFiles.task4).then(r => r.ok ? r.text() : "").then(html => { tasks.task4 = html; })
-];
-
-// Fetch conclusion if defined
-if(contentFiles.conclusion) {
-    fetchPromises.push(fetch(contentFiles.conclusion).then(r => r.ok ? r.text() : "").then(html => { tasks.conclusion = html; }));
+if (isSSB) {
+    contentFiles = {
+        home: "SSB_Home.html",
+        task1: "SSB_Task1.html",
+        task2: "SSB_Task2.html",
+        task3: "SSB_Task3.html",
+        task4: "SSB_Task4.html",
+        conclusion: "SSB_Conclusion.html"
+    };
+} else if (isLDE) {
+    contentFiles = {
+        home: "Home.html",
+        task1: "Task1.html",
+        task2: "Task2.html",
+        task3: "Task3.html",
+        task4: "Task4.html",
+        conclusion: "" 
+    };
 }
 
-Promise.all(fetchPromises).then(() => {
-  renderTask(getPage()); // Initial render after all content is fetched
-});
+// Only fetch and render if we are on a content page (LDE or SSB), NOT on the Hub
+if (!isHub && Object.keys(contentFiles).length > 0) {
+    const fetchPromises = [
+      fetch(contentFiles.home).then(r => r.ok ? r.text() : "").then(html => { tasks.home = html; }),
+      fetch(contentFiles.task1).then(r => r.ok ? r.text() : "").then(html => { tasks.task1 = html; }),
+      fetch(contentFiles.task2).then(r => r.ok ? r.text() : "").then(html => { tasks.task2 = html; }),
+      fetch(contentFiles.task3).then(r => r.ok ? r.text() : "").then(html => { tasks.task3 = html; }),
+      fetch(contentFiles.task4).then(r => r.ok ? r.text() : "").then(html => { tasks.task4 = html; })
+    ];
 
+    if(contentFiles.conclusion) {
+        fetchPromises.push(fetch(contentFiles.conclusion).then(r => r.ok ? r.text() : "").then(html => { tasks.conclusion = html; }));
+    }
+
+    Promise.all(fetchPromises).then(() => {
+      renderTask(getPage()); 
+    });
+}
 
 function getPage() {
   const hash = location.hash.replace("#", "");
@@ -61,20 +71,19 @@ function renderTask(page) {
     const app = document.getElementById("app");
     const loader = document.getElementById("loader");
 
+    // If elements don't exist (e.g. on Hub page), exit
+    if(!app || !loader) return;
+
     // Show loader, hide content
-    if(loader) loader.style.display = "block";
-    if(app) app.style.display = "none";
+    loader.style.display = "block";
+    app.style.display = "none";
     
-    // Simulate a short delay for smooth transition, then render content
     setTimeout(() => {
-        // Use the 404 page if the requested page doesn't exist in our tasks object
-        // or if the content is empty (e.g. conclusion for LDE)
         const pageContent = (tasks.hasOwnProperty(page) && tasks[page]) ? tasks[page] : tasks["404"];
         app.innerHTML = pageContent;
 
-        // Hide loader, show content
-        if(loader) loader.style.display = "none";
-        if(app) app.style.display = "block";
+        loader.style.display = "none";
+        app.style.display = "block";
 
         // Update nav active state
         ["navHome","nav1","nav2","nav3","nav4","navConclusion"].forEach(id => {
@@ -94,7 +103,7 @@ function renderTask(page) {
             document.getElementById(activeNavId).classList.add("active");
         }
 
-        // Close mobile menu if open
+        // Close mobile menu
         const nav = document.getElementById('main-nav');
         const toggle = document.querySelector('.menu-toggle');
         if (nav && nav.classList.contains('menu-open')) {
@@ -102,16 +111,15 @@ function renderTask(page) {
             if(toggle) toggle.classList.remove('open');
         }
 
-        // Re-initialize dynamic components
         activateReferenceLinks();
         initLightbox();
-        window.scrollTo(0, 0); // Scroll to top on page change
-    }, 150); // 150ms delay
+        window.scrollTo(0, 0);
+    }, 150);
 }
 
-
-// Hash change handler
+// Hash change handler (Only relevant for SPA pages)
 window.addEventListener("hashchange", function() {
+  if(isHub) return; // Do nothing on Hub
   const hash = location.hash.replace("#", "");
   if (hash.startsWith('ref')) {
     const ref = document.getElementById(hash);
@@ -126,9 +134,9 @@ window.addEventListener("hashchange", function() {
   renderTask(getPage());
 });
 
-// Home logo -> home (UPDATED: CHECK IF ELEMENT EXISTS FIRST)
+// Home logo -> home (SPA only)
 const homeLink = document.getElementById("home-link");
-if(homeLink) {
+if(homeLink && !isHub) {
     homeLink.onclick = function() { location.hash = "#home"; };
 }
 
@@ -162,7 +170,6 @@ function activateReferenceLinks() {
   }
 }
 
-// Open parent card if closed
 function openParentCardIfClosed(elementInside) {
   if(!elementInside) return;
   const parentCard = elementInside.closest('.task-card1');
@@ -174,8 +181,6 @@ function openParentCardIfClosed(elementInside) {
   }
 }
 
-// Toggle collapse
-// Expose globally because it's called from HTML onclick
 window.toggleCard = function(header) {
   const card = header.closest('.task-card1');
   if(!card) return;
@@ -186,7 +191,7 @@ window.toggleCard = function(header) {
   }
 };
 
-/* APPEND: Adjust floating logo */
+/* Floating logo adjust */
 (function() {
   const logo = document.querySelector('.floating-logo');
   const footer = document.querySelector('.gh-footer');
@@ -205,7 +210,7 @@ window.toggleCard = function(header) {
 })();
 
 
-/* Light/Dark Theme Toggle */
+/* Light/Dark Theme Toggle (Shared across all pages) */
 (function() {
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
@@ -236,7 +241,7 @@ window.toggleCard = function(header) {
     }
 })();
 
-/* Lightbox for Galleries with Navigation */
+/* Lightbox for Galleries */
 function initLightbox() {
     const overlay = document.getElementById('lightbox-overlay');
     if (!overlay) return;
