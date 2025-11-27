@@ -94,6 +94,14 @@ function renderTask(page) {
             document.getElementById(activeNavId).classList.add("active");
         }
 
+        // Close mobile menu if open
+        const nav = document.getElementById('main-nav');
+        const toggle = document.querySelector('.menu-toggle');
+        if (nav && nav.classList.contains('menu-open')) {
+            nav.classList.remove('menu-open');
+            if(toggle) toggle.classList.remove('open');
+        }
+
         // Re-initialize dynamic components
         activateReferenceLinks();
         initLightbox();
@@ -118,8 +126,11 @@ window.addEventListener("hashchange", function() {
   renderTask(getPage());
 });
 
-// Home logo -> home
-document.getElementById("home-link").onclick = function() { location.hash = "#home"; };
+// Home logo -> home (UPDATED: CHECK IF ELEMENT EXISTS FIRST)
+const homeLink = document.getElementById("home-link");
+if(homeLink) {
+    homeLink.onclick = function() { location.hash = "#home"; };
+}
 
 // Reference highlight handlers
 function activateReferenceLinks() {
@@ -210,6 +221,21 @@ window.toggleCard = function(header) {
     }
 })();
 
+/* Mobile Menu Toggle Logic */
+(function() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.getElementById('main-nav');
+    
+    if(menuToggle && nav) {
+        menuToggle.addEventListener('click', () => {
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+            menuToggle.classList.toggle('open');
+            nav.classList.toggle('menu-open');
+        });
+    }
+})();
+
 /* Lightbox for Galleries with Navigation */
 function initLightbox() {
     const overlay = document.getElementById('lightbox-overlay');
@@ -224,7 +250,7 @@ function initLightbox() {
     let currentGalleryLinks = [];
     let currentIndex = 0;
 
-    const galleries = document.querySelectorAll('.screenshot-gallery, .refworks-gallery');
+    const galleries = document.querySelectorAll('.screenshot-gallery, .refworks-gallery, .refworks-gallery-ssb2');
 
     galleries.forEach(gallery => {
         const links = Array.from(gallery.querySelectorAll('a'));

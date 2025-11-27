@@ -2,7 +2,7 @@
 :root {
   --bg-color: #f6f8fa;
   --text-color: #24292f;
-  --text-muted-color: #57606a; /* Dark grey for light mode */
+  --text-muted-color: #57606a;
   --header-bg: #24292f;
   --header-text: #ffffff;
   --link-color: #0d6efd;
@@ -22,7 +22,7 @@
 body.dark {
   --bg-color: #0d1117;
   --text-color: #c9d1d9;
-  --text-muted-color: #8b949e; /* Light grey for dark mode */
+  --text-muted-color: #8b949e;
   --header-bg: #161b22;
   --header-text: #f0f6fc;
   --link-color: #58a6ff;
@@ -75,7 +75,7 @@ body {
   color: var(--header-text);
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 100;
   box-shadow: 0 2px 8px #0001;
 }
 .gh-header-inner {
@@ -85,8 +85,9 @@ body {
   align-items: center;
   padding: 0 32px;
   height: 60px;
-  justify-content: space-between;
+  justify-content: flex-start; 
   box-sizing: border-box;
+  position: relative;
 }
 
 /* Logo styles */
@@ -97,6 +98,9 @@ body {
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+  z-index: 102;
+  margin-right: auto; /* Pushes everything else right */
+  flex-shrink: 0;
 }
 .gh-logo-img {
   display: block;
@@ -117,6 +121,26 @@ body {
   white-space: nowrap;
 }
 
+/* Hamburger Menu Button */
+.menu-toggle {
+  display: none; /* Hidden on desktop */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 102;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+.menu-toggle span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px 0;
+  background-color: var(--header-text);
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
 
 /* Nav */
 nav {
@@ -154,9 +178,8 @@ nav a:not(.nav-external-link):hover::after {
   to { width:100% }
 }
 
-/* External Link Styling (Switch Portfolio) - ADAPTED FOR THEMES */
+/* External Link Styling */
 .nav-external-link {
-  /* Use header-text with transparency for better contrast on dark header in both modes */
   color: rgba(255, 255, 255, 0.7) !important; 
   font-size: 0.9em;
   border: 1px solid rgba(255,255,255,0.15);
@@ -167,6 +190,9 @@ nav a:not(.nav-external-link):hover::after {
   gap: 6px;
   transition: all 0.2s ease;
   margin-left: 10px; 
+  white-space: nowrap;
+  z-index: 102; 
+  flex-shrink: 0;
 }
 
 .nav-external-link:hover {
@@ -187,6 +213,8 @@ nav a:not(.nav-external-link):hover::after {
     align-items: center;
     justify-content: center;
     margin-left: 10px;
+    z-index: 102; 
+    flex-shrink: 0;
 }
 #theme-toggle:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -467,6 +495,43 @@ body.dark .preview-card:hover {
   margin-top: 6px;
 }
 
+/* RefWorks gallery (Task 2 - SSB) - LARGE SIZE */
+.refworks-gallery-ssb2 {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  justify-content: center; /* Center the image */
+}
+.refworks-gallery-ssb2 figure {
+  margin: 0;
+  width: 100%; /* Use full container width, allows mobile response */
+  max-width: 100%;
+}
+.refworks-gallery-ssb2 a {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+}
+.refworks-gallery-ssb2 img {
+  width: 100%;
+  height: auto; /* Let height scale naturally to fit contents */
+  max-height: 600px; /* Prevent it from being taller than screen */
+  object-fit: contain; /* Ensure the mind map is fully visible */
+  border-radius: 8px;
+  border: 1px solid var(--table-border);
+  transition: transform 0.2s;
+}
+.refworks-gallery-ssb2 a:hover img {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.refworks-gallery-ssb2 figcaption {
+  font-size: 0.9rem;
+  color: var(--text-muted-color);
+  margin-top: 6px;
+}
+
 /* Floating logo */
 .floating-logo {
   position: fixed;
@@ -712,7 +777,81 @@ body.dark .floating-logo {
     margin: 24px auto;
   }
 }
-@media (max-width: 700px) {
+@media (max-width: 768px) {
+  /* Header Adaptation */
+  .gh-header-inner {
+    padding: 0 12px; 
+    justify-content: flex-start;
+  }
+
+  .gh-logo {
+    margin-right: auto;
+    flex: 0 0 auto;
+  }
+
+  /* Mobile Order */
+  .nav-external-link {
+    order: 2;
+    margin: 0 8px; 
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+  
+  #theme-toggle {
+    order: 3;
+    margin-left: 0;
+    margin-right: 5px;
+  }
+  
+  .menu-toggle {
+    display: block;
+    order: 4;
+    margin-left: 5px;
+  }
+
+  /* Mobile Navigation Menu */
+  nav {
+    position: absolute;
+    top: 60px; 
+    left: 0;
+    right: 0;
+    background: var(--header-bg);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+    border-bottom: 1px solid var(--card-border);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 99; 
+    
+    /* Hidden by default */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  nav.menu-open {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  
+  .menu-toggle.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 6px);
+  }
+  .menu-toggle.open span:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-toggle.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -6px);
+  }
+  
+  nav a {
+    padding: 15px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    width: auto;
+    display: block;
+  }
+
   main, .gh-header-inner, .footer-content { padding: 0 16px; max-width: 100%; }
   .task-card { padding: 24px; }
   .card-content { padding: 0 24px 22px 24px; }
@@ -730,9 +869,14 @@ body.dark .floating-logo {
   .preview-card { flex-direction: column; align-items: stretch; min-height: auto; }
   .preview-card-imgWrap { width: 100%; height: 160px; flex: 0 0 auto; }
   
-  .screenshot-gallery figure, .refworks-gallery figure { width: 100%; }
+  /* Adapt Galleries for Mobile */
+  .screenshot-gallery figure, 
+  .refworks-gallery figure,
+  .refworks-gallery-ssb2 figure { 
+      width: 100%; /* Full width on mobile */
+  }
   
-  .gh-logo-text { display: none; }
+  .gh-logo-text { display: block; }
   
   .floating-logo { left: 10px; bottom: 10px; padding: 4px; }
   .floating-logo img { width: 110px; }
@@ -749,8 +893,14 @@ body.dark .floating-logo {
   .hero-section h1 { font-size: 1.8rem; }
   .hero-description { font-size: 1rem; padding: 0 10px; }
 }
-@media (max-width: 380px) {
-  nav { gap: 8px; }
-  nav a { font-size: 0.9rem; }
-  #theme-toggle { margin-left: 5px; }
+@media (max-width: 450px) {
+  .gh-logo-text { display: none; }
+}
+@media (max-width: 360px) {
+    .nav-external-link {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+        margin: 0 4px;
+    }
+    .gh-header-inner { padding: 0 8px; }
 }
