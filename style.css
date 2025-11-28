@@ -938,6 +938,8 @@ body.dark .hub-card:hover {
 }
 
 /* === RESPONSIVE STYLES === */
+
+/* Tablet & Mobile Optimization */
 @media (max-width: 900px) {
   nav {
     display: none; /* Nav moves to hamburger menu */
@@ -980,6 +982,20 @@ body.dark .hub-card:hover {
   }
   
   main { margin: 24px auto; }
+
+  /* Hub Grid: Force single column earlier */
+  .hub-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Smaller gap */
+  }
+  
+  /* Make cards full width but capped */
+  .hub-card {
+    width: 100%;
+    max-width: 450px; /* Optimal reading width */
+    min-width: auto;  /* Remove strict min-width */
+  }
 }
 
 @media (max-width: 768px) {
@@ -990,10 +1006,6 @@ body.dark .hub-card:hover {
   /* Mobile header adjustments */
   .gh-logo-text { display: block; font-size: 1rem; }
   .gh-logo { margin-right: auto; }
-  
-  /* Hide button text on small screens */
-  .nav-btn-small span { display: none; }
-  .nav-btn-small { padding: 6px 8px; }
   
   main, .footer-content { padding: 0 16px; max-width: 100%; }
   .task-card { padding: 24px; }
@@ -1029,47 +1041,47 @@ body.dark .hub-card:hover {
     padding-right: 24px;
   }
   .skills-table { min-width: 500px; }
+}
+
+/* Mobile Specific (Phones) */
+@media (max-width: 600px) {
+  /* Hub Container spacing */
+  .hub-container {
+    padding: 40px 16px 60px 16px; /* Less padding on edges */
+  }
+
+  /* Welcome Text */
+  .hub-welcome h1 {
+    font-size: 2rem; /* Smaller title */
+    margin-bottom: 10px;
+  }
+  .hub-welcome p {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+
+  /* Cards adjustments */
+  .hub-card {
+    padding: 24px; /* Less inner padding */
+    border-radius: 12px;
+  }
   
-  /* Hub responsive */
-  .hub-welcome h1 { font-size: 2.2rem; }
-  .hub-grid { flex-direction: column; align-items: center; }
-  .hub-card { width: 100%; max-width: 100%; }
+  .hub-icon {
+    width: 60px; /* Smaller icon */
+    height: 60px;
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .hub-card h2 {
+    font-size: 1.3rem;
+  }
+
+  /* Hide button text in header to save space */
+  .nav-btn-small span { display: none; }
+  .nav-btn-small { padding: 6px 8px; }
 }
 
 @media (max-width: 450px) {
   .gh-logo-text { display: none; }
-}
-/* Стилі для липкої шапки */
-.sticky-nav {
-    position: sticky;     /* Робить її "липкою" */
-    top: 0;               /* Приклеює до самого верху */
-    z-index: 1000;        /* Гарантує, що вона буде поверх іншого тексту */
-    
-    display: flex;        /* Розміщує елементи в рядок */
-    justify-content: space-between; /* Розсовує ім'я вліво, а меню вправо */
-    align-items: center;  /* Вирівнює по центру вертикально */
-    
-    background-color: #333; /* Темний фон (можеш змінити колір) */
-    color: white;         /* Білий текст */
-    padding: 15px 30px;   /* Відступи всередині смуги */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Легка тінь знизу */
-}
-
-.nav-brand {
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.sticky-nav nav a {
-    color: white;         /* Колір посилань */
-    text-decoration: none; /* Прибирає підкреслення */
-    margin-left: 20px;    /* Відступ між кнопками */
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.sticky-nav nav a:hover {
-    color: #ffd700;       /* Колір при наведенні (золотий) */
 }
