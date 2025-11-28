@@ -1039,3 +1039,37 @@ body.dark .hub-card:hover {
 @media (max-width: 450px) {
   .gh-logo-text { display: none; }
 }
+/* Стилі для липкої шапки */
+.sticky-nav {
+    position: sticky;     /* Робить її "липкою" */
+    top: 0;               /* Приклеює до самого верху */
+    z-index: 1000;        /* Гарантує, що вона буде поверх іншого тексту */
+    
+    display: flex;        /* Розміщує елементи в рядок */
+    justify-content: space-between; /* Розсовує ім'я вліво, а меню вправо */
+    align-items: center;  /* Вирівнює по центру вертикально */
+    
+    background-color: #333; /* Темний фон (можеш змінити колір) */
+    color: white;         /* Білий текст */
+    padding: 15px 30px;   /* Відступи всередині смуги */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Легка тінь знизу */
+}
+
+.nav-brand {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sticky-nav nav a {
+    color: white;         /* Колір посилань */
+    text-decoration: none; /* Прибирає підкреслення */
+    margin-left: 20px;    /* Відступ між кнопками */
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.sticky-nav nav a:hover {
+    color: #ffd700;       /* Колір при наведенні (золотий) */
+}
